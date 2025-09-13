@@ -9,7 +9,7 @@
 
     <select id="arquivoSelect">
         <option value="">--Selecione--</option>
-        <!-- Coloque aqui os links públicos dos seus arquivos TXT -->
+        <!-- Substitua os IDs pelos seus arquivos do Google Drive -->
         <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_1">Arquivo 1</option>
         <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_2">Arquivo 2</option>
     </select>
@@ -25,7 +25,10 @@
             const url = select.value;
             if(url){
                 fetch(url)
-                .then(response => response.text())
+                .then(response => {
+                    if(!response.ok) throw new Error('Erro ao acessar o arquivo');
+                    return response.text();
+                })
                 .then(text => {
                     conteudo.textContent = text;
                 })
