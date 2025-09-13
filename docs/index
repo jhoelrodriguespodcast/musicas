@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Ler TXT do Google Drive</title>
+</head>
+<body>
+    <h1>Selecione um arquivo TXT</h1>
 
+    <select id="arquivoSelect">
+        <option value="">--Selecione--</option>
+        <!-- Coloque aqui os links públicos dos seus arquivos TXT -->
+        <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_1">Arquivo 1</option>
+        <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_2">Arquivo 2</option>
+    </select>
+
+    <h2>Conteúdo do arquivo:</h2>
+    <pre id="conteudo"></pre>
+
+    <script>
+        const select = document.getElementById('arquivoSelect');
+        const conteudo = document.getElementById('conteudo');
+
+        select.addEventListener('change', () => {
+            const url = select.value;
+            if(url){
+                fetch(url)
+                .then(response => response.text())
+                .then(text => {
+                    conteudo.textContent = text;
+                })
+                .catch(err => {
+                    conteudo.textContent = 'Erro ao carregar arquivo: ' + err;
+                });
+            } else {
+                conteudo.textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>
