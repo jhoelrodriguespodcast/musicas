@@ -2,16 +2,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Ler TXT do Google Drive</title>
+    <title>Lista de Arquivos TXT do Google Drive</title>
 </head>
 <body>
     <h1>Selecione um arquivo TXT</h1>
 
     <select id="arquivoSelect">
         <option value="">--Selecione--</option>
-        <!-- Substitua os IDs pelos seus arquivos do Google Drive -->
-        <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_1">Arquivo 1</option>
-        <option value="https://drive.google.com/uc?export=download&id=ID_DO_ARQUIVO_2">Arquivo 2</option>
     </select>
 
     <h2>Conteúdo do arquivo:</h2>
@@ -21,20 +18,36 @@
         const select = document.getElementById('arquivoSelect');
         const conteudo = document.getElementById('conteudo');
 
+        // ID da pasta do Drive
+        const folderId = "1UkBjpiabbhcQGbnnzMdDVkby-EKTysl2";
+
+        // URL do Web App do Google Apps Script
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbzNFQbteLvWFrv9W3dwPe64Av-XN2uwRXN_1MRORRVJjA3S8U-a-4eyZzRTRll7lejaIA/exec";
+
+        // Buscar lista de arquivos TXT da pasta
+        fetch(webAppUrl + "?folderId=" + folderId)
+            .then(response => response.json())
+            .then(files => {
+                files.forEach(file => {
+                    const option = document.createElement('option');
+                    option.value = file.url;
+                    option.textContent = file.name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error("Erro ao buscar arquivos:", err);
+                conteudo.textContent = "Erro ao carregar a lista de arquivos: " + err;
+            });
+
+        // Mostrar conteúdo do arquivo selecionado
         select.addEventListener('change', () => {
             const url = select.value;
-            if(url){
+            if (url) {
                 fetch(url)
-                .then(response => {
-                    if(!response.ok) throw new Error('Erro ao acessar o arquivo');
-                    return response.text();
-                })
-                .then(text => {
-                    conteudo.textContent = text;
-                })
-                .catch(err => {
-                    conteudo.textContent = 'Erro ao carregar arquivo: ' + err;
-                });
+                    .then(r => r.text())
+                    .then(t => { conteudo.textContent = t; })
+                    .catch(err => { conteudo.textContent = "Erro ao carregar arquivo: " + err; });
             } else {
                 conteudo.textContent = '';
             }
